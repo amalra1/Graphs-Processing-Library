@@ -1,0 +1,10 @@
+// o nome do grafo
+triângulo_com_vértice
+
+// uma lista com três arestas
+um -- dois
+dois -- quatro
+quatro -- um
+
+// um vértice isolado
+três

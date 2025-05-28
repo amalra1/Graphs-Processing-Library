@@ -5,24 +5,56 @@
 //------------------------------------------------------------------------------
 int main(void) {
 
-  grafo *g = le_grafo(stdin);
-  char *s;
+  FILE *arq;
+  grafo *g = inicializa_grafo();
 
-  printf("grafo: %s\n", nome(g));
-  printf("%d vertices\n", n_vertices(g));
-  printf("%d arestas\n", n_arestas(g));
-  printf("%d componentes\n", n_componentes(g));
+  if (!g) 
+  {
+    fprintf(stderr, "Falha ao inicializar o grafo.\n");
+    return EXIT_FAILURE;
+  }
 
-  printf("%sbipartido\n", bipartido(g) ? "" : "não ");
+  arq = fopen("entradas/grafo1.txt", "r");
 
-  printf("diâmetros: %s\n", s=diametros(g));
-  free(s);
+  if (!arq) 
+  {
+    perror("Erro ao abrir o arquivo do grafo"); 
+    return EXIT_FAILURE;
+  }
 
-  printf("vértices de corte: %s\n", s=vertices_corte(g));
-  free(s);
+  g = le_grafo(arq);
 
-  printf("arestas de corte: %s\n", s=arestas_corte(g));
-  free(s);
+  if (!g) 
+  {
+    fprintf(stderr, "Erro ao ler o grafo do arquivo.\n");
+    fclose(arq); 
+    return EXIT_FAILURE;
+  }
 
-  return ! destroi_grafo(g);
+  printf("Nome do grafo lido: %s\n", g->nome);
+
+  fclose(arq);
+
+  return 0;
+
+  // grafo *g = le_grafo(stdin);
+  // char *s;
+
+  // printf("grafo: %s\n", nome(g));
+  // printf("%d vertices\n", n_vertices(g));
+  // printf("%d arestas\n", n_arestas(g));
+  // printf("%d componentes\n", n_componentes(g));
+
+  // printf("%sbipartido\n", bipartido(g) ? "" : "não ");
+
+  // printf("diâmetros: %s\n", s=diametros(g));
+  // free(s);
+
+  // printf("vértices de corte: %s\n", s=vertices_corte(g));
+  // free(s);
+
+  // printf("arestas de corte: %s\n", s=arestas_corte(g));
+  // free(s);
+
+  // return ! destroi_grafo(g);
 }

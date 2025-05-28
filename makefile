@@ -47,9 +47,6 @@ all : teste
 grafo.o teste.o : %.o : %.c
 	$(CC) -c $(CFLAGS) -o $@ $^
 
-# grafo.o : grafo.cpp
-# 	$(CC) -c $(CPPFLAGS) -o $@ $^
-
 teste : teste.o grafo.o
 	$(CC) $(CFLAGS) -o $@ $^
 
