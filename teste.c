@@ -5,7 +5,6 @@
 //------------------------------------------------------------------------------
 int main(void) {
 
-  FILE *arq;
   grafo *g = inicializa_grafo();
 
   if (!g) 
@@ -14,26 +13,15 @@ int main(void) {
     return EXIT_FAILURE;
   }
 
-  arq = fopen("entradas/grafo1.txt", "r");
-
-  if (!arq) 
-  {
-    perror("Erro ao abrir o arquivo do grafo"); 
-    return EXIT_FAILURE;
-  }
-
-  g = le_grafo(arq);
+  g = le_grafo(stdin);
 
   if (!g) 
   {
-    fprintf(stderr, "Erro ao ler o grafo do arquivo.\n");
-    fclose(arq); 
+    fprintf(stderr, "Erro ao ler o grafo do arquivo.\n"); 
     return EXIT_FAILURE;
   }
 
   printf("Nome do grafo lido: %s\n", nome(g));
-
-  fclose(arq);
 
   return 0;
 
