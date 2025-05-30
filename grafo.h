@@ -1,21 +1,10 @@
 #ifndef GRAFO_H
 #define GRAFO_H
 
-#define MAX_LINHA 2048
-
 //------------------------------------------------------------------------------
 // estrutura de dados para representar um grafo
 
-typedef struct grafo {
-    char *nome;
-
-    char **nomes_vertices;
-    unsigned int num_vertices;
-
-    int **matriz_adj;
-    unsigned int num_arestas;   
-
-} grafo;
+typedef struct grafo grafo;
 
 //------------------------------------------------------------------------------
 // lê um grafo de f e o devolve
@@ -55,8 +44,6 @@ quatro -- um 41
 três
 
 */
-
-grafo *inicializa_grafo(); 
 
 grafo *le_grafo(FILE *f);
 

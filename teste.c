@@ -31,7 +31,7 @@ int main(void) {
     return EXIT_FAILURE;
   }
 
-  printf("Nome do grafo lido: %s\n", g->nome);
+  printf("Nome do grafo lido: %s\n", nome(g));
 
   fclose(arq);
 

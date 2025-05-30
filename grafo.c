@@ -3,6 +3,19 @@
 #include <string.h> 
 #include "grafo.h"
 
+#define MAX_LINHA 2048
+
+struct grafo {
+    char *nome;
+
+    char **nomes_vertices;
+    unsigned int num_vertices;
+
+    int **matriz_adj;
+    unsigned int num_arestas;   
+
+};
+
 grafo *inicializa_grafo() 
 {
     grafo *g = (grafo*)malloc(sizeof(grafo));
@@ -47,4 +60,9 @@ grafo *le_grafo(FILE *f)
     }
     
     return g;
+}
+
+char *nome(grafo *g) 
+{
+    return g->nome;
 }
