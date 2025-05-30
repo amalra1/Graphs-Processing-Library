@@ -5,32 +5,37 @@
 
 #define MAX_LINHA 2048
 
-struct grafo {
+typedef struct vertice 
+{
+    char* nome;           
+    int peso;                  
+    struct vertice *prox;
+} vertice;
+
+struct grafo 
+{
     char *nome;
-
-    char **nomes_vertices;
     unsigned int num_vertices;
-
-    int **matriz_adj;
-    unsigned int num_arestas;   
-
+    vertice **lista_adj;
+    unsigned int num_arestas;
 };
 
 grafo *inicializa_grafo() 
 {
     grafo *g = (grafo*)malloc(sizeof(grafo));
-    if (!g) {
+
+    if (!g) 
+    {
         perror("Erro ao alocar grafo");
         return NULL;
     }
 
-    g->nome = (char*)malloc(MAX_LINHA);
-    g->nomes_vertices = NULL;
+    g->nome = malloc(MAX_LINHA);
     g->num_vertices = 0;
-    g->matriz_adj = NULL;
+    g->lista_adj = NULL;
     g->num_arestas = 0;
 
-    return g; 
+    return g;
 }
 
 grafo *le_grafo(FILE *f)
