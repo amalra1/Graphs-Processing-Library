@@ -46,28 +46,119 @@ grafo *le_grafo(FILE *f)
     grafo *g = inicializa_grafo();
     if (!g) 
         return NULL;
-    
+
     char linha[MAX_LINHA];
+    char **nomes = NULL;
+    unsigned int total = 0, capacidade = 10;
+    int leu_nome = 0;
+
+    nomes = malloc(capacidade * sizeof(char*));
+    if (!nomes) return NULL;
 
     while (fgets(linha, MAX_LINHA, f) != NULL) 
     {
-        // Remove '\n'
         linha[strcspn(linha, "\n")] = 0;
 
-        // Pula as linhas que não importam
         if (strlen(linha) == 0 || (linha[0] == '/' && linha[1] == '/'))
             continue;
 
-        // Pega o nome
-        strcpy(g->nome, linha);
+        if (!leu_nome) 
+        {
+            strcpy(g->nome, linha);
+            leu_nome = 1;
+            continue;
+        }
 
-        break;
+        // Checa se é uma aresta 
+        char *ponta1 = NULL, *ponta2 = NULL;
+        int peso = 0;
+        char *sep = strstr(linha, "--");
+
+        if (sep)
+        {
+            *sep = '\0';
+            ponta1 = linha;
+            ponta2 = sep + 2;
+
+            while (*ponta2 == ' ') ponta2++;
+            while (*(sep - 1) == ' ' && sep > linha) *(--sep) = '\0';
+
+            // Lógica do peso -- FAZER DEPOIS
+            // char *peso_str = strrchr(ponta2, ' ');
+            // if (peso_str) {
+            //     peso = atoi(peso_str + 1);
+            //     *peso_str = '\0'; // Remove o peso da string do nome
+            // }
+
+            // Adiciona os dois vértices na estrutura
+            char *vertices[2] = {ponta1, ponta2};
+            for (int i = 0; i < 2; i++) 
+            {
+                int existe = 0;
+                for (unsigned int j = 0; j < total; j++) 
+                {
+                    if (strcmp(nomes[j], vertices[i]) == 0)
+                    {
+                        existe = 1;
+                        break;
+                    }
+                }
+                if (!existe) 
+                {
+                    if (total == capacidade) 
+                    {
+                        capacidade *= 2;
+                        nomes = realloc(nomes, capacidade * sizeof(char*));
+                    }
+
+                    nomes[total] = malloc(strlen(vertices[i]) + 1);
+                    strcpy(nomes[total], vertices[i]);
+                    total++;
+                }
+            }
+        } 
+        else 
+        {
+            // Vértice isolado 
+            int existe = 0;
+            for (unsigned int j = 0; j < total; j++) 
+            {
+                if (strcmp(nomes[j], linha) == 0)
+                {
+                    existe = 1;
+                    break;
+                }
+            }
+            if (!existe) 
+            {
+                if (total == capacidade) 
+                {
+                    capacidade *= 2;
+                    nomes = realloc(nomes, capacidade * sizeof(char*));
+                }
+
+                nomes[total] = malloc(strlen(linha) + 1);
+                strcpy(nomes[total], linha);
+                total++;
+            }
+        }
     }
-    
+
+    g->num_vertices = total;
+
+    for (unsigned int i = 0; i < total; i++)
+        free(nomes[i]);
+    free(nomes);
+
     return g;
 }
 
 char *nome(grafo *g) 
 {
     return g->nome;
+}
+
+unsigned int n_vertices(grafo *g)
+{
+    return g->num_vertices;
 }
