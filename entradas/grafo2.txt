@@ -1,0 +1,7 @@
+quadrado_com_vértice_e_um_isolado
+
+um -- dois
+dois -- três
+quatro -- três
+quatro -- um
+cinco
