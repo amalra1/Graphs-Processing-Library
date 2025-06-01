@@ -15,8 +15,7 @@ int main(void)
 	printf("%d vertices\n", n_vertices(g));
 	printf("%d arestas\n", n_arestas(g));
 	printf("%d componentes\n", n_componentes(g));
-
-	// printf("%sbipartido\n", bipartido(g) ? "" : "não ");
+	printf("%sbipartido\n", bipartido(g) ? "" : "não ");
 
 	// printf("diâmetros: %s\n", s=diametros(g));
 	// free(s);

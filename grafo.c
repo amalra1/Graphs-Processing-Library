@@ -278,3 +278,79 @@ unsigned int n_componentes(grafo *g)
     free(visitado);
     return componentes;
 }
+
+unsigned int bipartido(grafo *g) 
+{
+    if (!g) 
+        return 0;
+
+    int *cor = malloc(g->num_vertices * sizeof(int));
+    if (!cor) 
+        return 0;
+
+    // A """cor""" -1 significa não visitado
+    for (unsigned int i = 0; i < g->num_vertices; i++)
+        cor[i] = -1;
+
+    for (unsigned int i = 0; i < g->num_vertices; i++) 
+    {
+        if (cor[i] != -1) 
+            continue;
+
+        // Faz uma busca em largura a partir de i, para verificar os seus vizinhos
+        unsigned int fila_inicio = 0, fila_fim = 0;
+        unsigned int *fila = malloc(g->num_vertices * sizeof(unsigned int));
+
+        if (!fila) 
+        {
+            free(cor);
+            return 0;
+        }
+
+        fila[fila_fim++] = i;
+        cor[i] = 0;
+
+        while (fila_inicio < fila_fim) 
+        {
+            int atual = fila[fila_inicio++];
+            vertice *vizinho = g->lista_adj[atual]->prox;
+
+            while (vizinho) 
+            {
+                int idx_vizinho = -1;
+                for (unsigned int j = 0; j < g->num_vertices; j++) 
+                {
+                    if (strcmp(g->lista_adj[j]->nome, vizinho->nome) == 0) 
+                    {
+                        idx_vizinho = j;
+                        break;
+                    }
+                }
+
+                if (idx_vizinho != -1) 
+                {
+                    if (cor[idx_vizinho] == -1) 
+                    {
+                        cor[idx_vizinho] = 1 - cor[atual];
+                        fila[fila_fim++] = idx_vizinho;
+                    }
+                    
+                    // Se falhar em algum dos casos, já não é bipartido 
+                    else if (cor[idx_vizinho] == cor[atual]) 
+                    {
+                        free(cor);
+                        free(fila);
+                        return 0;
+                    }
+                }
+
+                vizinho = vizinho->prox;
+            }
+        }
+
+        free(fila);
+    }
+
+    free(cor);
+    return 1;
+}
