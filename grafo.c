@@ -234,3 +234,47 @@ void imprime_lista_adjacencia(grafo *g)
     }
 }
 
+void busca_profundidade(grafo *g, int idx, int *visitado) 
+{
+    visitado[idx] = 1;
+    vertice *v = g->lista_adj[idx]->prox;
+
+    while (v) 
+    {
+        for (unsigned int i = 0; i < g->num_vertices; i++) 
+        {
+            if (strcmp(v->nome, g->lista_adj[i]->nome) == 0 && !visitado[i]) 
+            {
+                busca_profundidade(g, i, visitado);
+                break;
+            }
+        }
+        v = v->prox;
+    }
+}
+
+unsigned int n_componentes(grafo *g) 
+{
+    if (!g) 
+        return 0;
+
+    int *visitado = calloc(g->num_vertices, sizeof(int));
+    if (!visitado) 
+        return 0;
+
+    unsigned int componentes = 0;
+
+    // Verifica se existe um caminho para todos os vértices a partir de um vértice i
+    // Se não houver para algum, quer dizer que ali tem outro componente
+    for (unsigned int i = 0; i < g->num_vertices; i++) 
+    {
+        if (!visitado[i]) 
+        {
+            componentes++;
+            busca_profundidade(g, i, visitado);
+        }
+    }
+
+    free(visitado);
+    return componentes;
+}

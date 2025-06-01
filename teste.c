@@ -14,6 +14,7 @@ int main(void)
 	printf("Nome do grafo lido: %s\n", nome(g));
 	printf("%d vertices\n", n_vertices(g));
 	printf("%d arestas\n", n_arestas(g));
+	printf("%d componentes\n", n_componentes(g));
 
 	// printf("%d componentes\n", n_componentes(g));
 
