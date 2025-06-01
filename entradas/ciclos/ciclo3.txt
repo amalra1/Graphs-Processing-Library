@@ -1,0 +1,8 @@
+pentagono_com_x_no_meio
+um -- dois
+dois -- três
+três -- quatro
+quatro -- cinco
+cinco -- um
+um -- quatro
+cinco -- três

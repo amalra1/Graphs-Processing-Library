@@ -116,6 +116,8 @@ grafo *le_grafo(FILE *f)
                     total++;
                 }
             }
+
+            g->num_arestas++;
         } 
         else 
         {
@@ -161,4 +163,9 @@ char *nome(grafo *g)
 unsigned int n_vertices(grafo *g)
 {
     return g->num_vertices;
+}
+
+unsigned int n_arestas(grafo *g)
+{
+    return g->num_arestas;
 }

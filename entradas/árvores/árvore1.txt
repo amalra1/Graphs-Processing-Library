@@ -1,0 +1,7 @@
+árvore de caminho
+
+um -- dois
+dois -- tres
+tres -- quatro
+quatro -- cinco
+cinco -- seis
