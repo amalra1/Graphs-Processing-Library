@@ -1,0 +1,23 @@
+árvore com 13 vértices
+
+
+
+um -- dois
+
+dois -- quatro
+dois -- cinco
+um -- três
+
+
+três -- seis
+três -- sete
+três -- oito
+sete -- nove
+nove -- doze
+
+doze -- treze
+oito -- dez
+
+
+oito -- onze
+

@@ -18,7 +18,7 @@ struct grafo {
     unsigned int num_arestas;
 };
 
-void adiciona_nome(char *nome, char ***nomes, unsigned int *total, unsigned int *capacidade) 
+static void adiciona_nome(char *nome, char ***nomes, unsigned int *total, unsigned int *capacidade) 
 {
     for (unsigned int j = 0; j < *total; j++) 
     {
@@ -37,7 +37,7 @@ void adiciona_nome(char *nome, char ***nomes, unsigned int *total, unsigned int 
     (*total)++;
 }
 
-int indice_vertice(char *nome, vertice **lista_adj, unsigned int total) 
+static int indice_vertice(char *nome, vertice **lista_adj, unsigned int total) 
 {
     for (unsigned int i = 0; i < total; i++)
         if (strcmp(lista_adj[i]->nome, nome) == 0)
@@ -46,7 +46,7 @@ int indice_vertice(char *nome, vertice **lista_adj, unsigned int total)
     return -1;
 }
 
-void adiciona_aresta(vertice **lista_adj, int origem, int destino) 
+static void adiciona_aresta(vertice **lista_adj, int origem, int destino) 
 {
     vertice *v = malloc(sizeof(vertice));
     v->nome = lista_adj[destino]->nome;
