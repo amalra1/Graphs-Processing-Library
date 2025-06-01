@@ -16,8 +16,6 @@ int main(void)
 	printf("%d arestas\n", n_arestas(g));
 	printf("%d componentes\n", n_componentes(g));
 
-	// printf("%d componentes\n", n_componentes(g));
-
 	// printf("%sbipartido\n", bipartido(g) ? "" : "não ");
 
 	// printf("diâmetros: %s\n", s=diametros(g));

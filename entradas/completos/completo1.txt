@@ -1,0 +1,8 @@
+quadrado completo
+
+um -- dois
+dois -- três
+três -- quatro
+quatro -- um
+um -- três
+quatro -- dois
