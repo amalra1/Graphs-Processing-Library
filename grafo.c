@@ -195,9 +195,12 @@ void imprime_lista_adjacencia(grafo *g)
 
         while (atual) 
         {
-            printf("%s ", atual->nome);
+            printf("%s", atual->nome);
+            if (atual->prox)
+                printf(", ");
             atual = atual->prox;
         }
         printf("\n");
     }
 }
+
