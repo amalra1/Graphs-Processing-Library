@@ -478,3 +478,117 @@ char *diametros(grafo *g)
     free(diametros);
     return res;
 }
+
+static void busca_profundidade_articulacao(grafo *g, int u, int parent, int *tempo, int *visitado, int *desc, int *low, int *articulacao, int *time) 
+{
+    visitado[u] = 1;
+    desc[u] = low[u] = (*time)++;
+    int filhos = 0;
+
+    vertice *v = g->lista_adj[u]->prox;
+    while (v) 
+    {
+        int idx_v = -1;
+        for (unsigned int i = 0; i < g->num_vertices; i++) 
+        {
+            if (strcmp(g->lista_adj[i]->nome, v->nome) == 0) 
+            {
+                idx_v = i;
+                break;
+            }
+        }
+
+        if (idx_v == -1) 
+        {
+            v = v->prox;
+            continue;
+        }
+
+        if (!visitado[idx_v]) 
+        {
+            filhos++;
+            busca_profundidade_articulacao(g, idx_v, u, tempo, visitado, desc, low, articulacao, time);
+            low[u] = (low[u] < low[idx_v]) ? low[u] : low[idx_v];
+
+            if ((parent == -1 && filhos > 1) || (parent != -1 && low[idx_v] >= desc[u]))
+                articulacao[u] = 1;
+        } 
+        else if (idx_v != parent) 
+            low[u] = (low[u] < desc[idx_v]) ? low[u] : desc[idx_v];
+
+        v = v->prox;
+    }
+}
+
+char *vertices_corte(grafo *g) 
+{
+    int *visitado = calloc(g->num_vertices, sizeof(int));
+    int *desc = malloc(g->num_vertices * sizeof(int));
+    int *low = malloc(g->num_vertices * sizeof(int));
+    int *articulacao = calloc(g->num_vertices, sizeof(int));
+    int tempo = 0;
+
+    for (unsigned int i = 0; i < g->num_vertices; i++)
+        if (!visitado[i])
+            busca_profundidade_articulacao(g, i, -1, &tempo, visitado, desc, low, articulacao, &tempo);
+
+    // Conta quantos vértices são de corte
+    int count = 0;
+    for (unsigned int i = 0; i < g->num_vertices; i++)
+        if (articulacao[i]) count++;
+
+    if (count == 0) 
+    {
+        free(visitado);
+        free(desc);
+        free(low);
+        free(articulacao);
+        char *vazio = malloc(1);
+        vazio[0] = '\0';
+        return vazio;
+    }
+
+    // Copia os nomes para ordenar
+    char **nomes = malloc(count * sizeof(char*));
+    int k = 0;
+    for (unsigned int i = 0; i < g->num_vertices; i++) 
+        if (articulacao[i])
+            nomes[k++] = g->lista_adj[i]->nome;
+
+    // Ordena os nomes alfabeticamente
+    for (int i = 0; i < count - 1; i++) 
+    {
+        for (int j = i + 1; j < count; j++) 
+        {
+            if (strcmp(nomes[i], nomes[j]) > 0) 
+            {
+                char *tmp = nomes[i];
+                nomes[i] = nomes[j];
+                nomes[j] = tmp;
+            }
+        }
+    }
+
+    // Concatena os nomes
+    size_t tam_total = 0;
+    for (int i = 0; i < count; i++)
+        tam_total += strlen(nomes[i]) + 1;
+
+    char *res = malloc(tam_total);
+    res[0] = '\0';
+    for (int i = 0; i < count; i++) 
+    {
+        strcat(res, nomes[i]);
+        
+        if (i < count - 1)
+            strcat(res, " ");
+    }
+
+    free(visitado);
+    free(desc);
+    free(low);
+    free(articulacao);
+    free(nomes);
+
+    return res;
+}
