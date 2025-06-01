@@ -73,6 +73,36 @@ grafo *inicializa_grafo()
     return g;
 }
 
+unsigned int destroi_grafo(grafo *g)
+{
+    if (!g) 
+        return 0;
+
+    // Free da lista de adjacência
+    for (unsigned int i = 0; i < g->num_vertices; i++) 
+    {
+        vertice *atual = g->lista_adj[i];
+        
+        vertice *prox = atual->prox;
+        while (prox) 
+        {
+            vertice *temp = prox;
+            prox = prox->prox;
+            free(temp);
+        }
+
+        free(atual->nome);
+        free(atual);
+    }
+
+    free(g->lista_adj);
+    free(g->nome);
+    free(g);
+
+    return 1;
+}
+
+
 grafo *le_grafo(FILE *f) 
 {
     if (!f) return NULL;

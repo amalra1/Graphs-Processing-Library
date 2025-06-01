@@ -19,7 +19,9 @@ int main(void) {
   printf("%d vertices\n", n_vertices(g));
   printf("%d arestas\n", n_arestas(g));
 
-   imprime_lista_adjacencia(g);
+  imprime_lista_adjacencia(g);
+
+  destroi_grafo(g);
 
   return 0;
 
