@@ -11,5 +11,5 @@ make
 ## Exemplo de execução
 
 ```bash
-./teste < entradas/grafo2.txt
+./teste < caminho_para_o_grafo.txt
 ```
