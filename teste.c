@@ -5,13 +5,7 @@
 //------------------------------------------------------------------------------
 int main(void) {
 
-  grafo *g = inicializa_grafo();
-
-  if (!g) 
-  {
-    fprintf(stderr, "Falha ao inicializar o grafo.\n");
-    return EXIT_FAILURE;
-  }
+  grafo *g;
 
   g = le_grafo(stdin);
 
