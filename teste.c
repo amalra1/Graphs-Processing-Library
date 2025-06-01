@@ -6,31 +6,17 @@
 int main(void) {
 
   grafo *g;
+  char *s;
 
   g = le_grafo(stdin);
-
-  if (!g) 
-  {
-    fprintf(stderr, "Erro ao ler o grafo do arquivo.\n"); 
-    return EXIT_FAILURE;
-  }
 
   printf("Nome do grafo lido: %s\n", nome(g));
   printf("%d vertices\n", n_vertices(g));
   printf("%d arestas\n", n_arestas(g));
 
+  // Pra testar
   imprime_lista_adjacencia(g);
 
-  destroi_grafo(g);
-
-  return 0;
-
-  // grafo *g = le_grafo(stdin);
-  // char *s;
-
-  // printf("grafo: %s\n", nome(g));
-  // printf("%d vertices\n", n_vertices(g));
-  // printf("%d arestas\n", n_arestas(g));
   // printf("%d componentes\n", n_componentes(g));
 
   // printf("%sbipartido\n", bipartido(g) ? "" : "não ");
@@ -44,5 +30,5 @@ int main(void) {
   // printf("arestas de corte: %s\n", s=arestas_corte(g));
   // free(s);
 
-  // return ! destroi_grafo(g);
+  return ! destroi_grafo(g);
 }
