@@ -1,0 +1,24 @@
+tres componentes aleatórios mas um não é bipartido
+
+// quadrado completo
+um -- dois
+dois -- quatro
+quatro -- três
+três -- um
+um -- quatro
+três -- dois
+
+// árvore
+cinco -- seis
+seis -- sete
+sete -- oito
+sete -- nove
+oito -- dez
+
+// 'H' na horizontal
+onze -- doze
+doze -- treze
+doze -- quatorze
+quatorze -- dezesseis
+quinze -- dezesseis
+dezesseis -- dezessete
