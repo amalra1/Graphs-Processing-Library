@@ -526,7 +526,7 @@ char *vertices_corte(grafo *g)
     int *desc = malloc(g->num_vertices * sizeof(int));
     int *low = malloc(g->num_vertices * sizeof(int));
     int *articulacao = calloc(g->num_vertices, sizeof(int));
-    int tempo = 0;
+    int tempo = 0;  // Contador, serve pra manter a ordem das visitas nos vértices na busca em profundidade
 
     for (unsigned int i = 0; i < g->num_vertices; i++)
         if (!visitado[i])
@@ -579,7 +579,7 @@ char *vertices_corte(grafo *g)
     for (int i = 0; i < count; i++) 
     {
         strcat(res, nomes[i]);
-        
+
         if (i < count - 1)
             strcat(res, " ");
     }
