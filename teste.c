@@ -19,6 +19,8 @@ int main(void) {
   printf("%d vertices\n", n_vertices(g));
   printf("%d arestas\n", n_arestas(g));
 
+   imprime_lista_adjacencia(g);
+
   return 0;
 
   // grafo *g = le_grafo(stdin);
