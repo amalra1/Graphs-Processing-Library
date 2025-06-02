@@ -592,3 +592,122 @@ char *vertices_corte(grafo *g)
 
     return res;
 }
+
+static void busca_profundidade_pontes(grafo *g, int u, int parent, int *tempo, int *visitado, int *desc, int *low, char ***pontes, int *count, int *capacity) 
+{
+    visitado[u] = 1;
+    desc[u] = low[u] = (*tempo)++;
+    
+    vertice *v = g->lista_adj[u]->prox;
+    while (v) 
+    {
+        int idx_v = -1;
+        for (unsigned int i = 0; i < g->num_vertices; i++) 
+        {
+            if (strcmp(g->lista_adj[i]->nome, v->nome) == 0) 
+            {
+                idx_v = i;
+                break;
+            }
+        }
+
+        if (idx_v == -1) 
+        {
+            v = v->prox;
+            continue;
+        }
+
+        if (!visitado[idx_v]) 
+        {
+            busca_profundidade_pontes(g, idx_v, u, tempo, visitado, desc, low, pontes, count, capacity);
+            low[u] = (low[u] < low[idx_v]) ? low[u] : low[idx_v];
+
+            if (low[idx_v] > desc[u]) 
+            {
+                // Aresta de corte encontrada
+                if (*count == *capacity) 
+                {
+                    *capacity *= 2;
+                    *pontes = realloc(*pontes, (*capacity) * sizeof(char*));
+                }
+
+                char *ponte = malloc(strlen(g->lista_adj[u]->nome) + strlen(g->lista_adj[idx_v]->nome) + 2);
+                if (strcmp(g->lista_adj[u]->nome, g->lista_adj[idx_v]->nome) < 0)
+                    sprintf(ponte, "%s %s", g->lista_adj[u]->nome, g->lista_adj[idx_v]->nome);
+                else
+                    sprintf(ponte, "%s %s", g->lista_adj[idx_v]->nome, g->lista_adj[u]->nome);
+
+                (*pontes)[(*count)++] = ponte;
+            }
+        } 
+        else if (idx_v != parent) 
+            low[u] = (low[u] < desc[idx_v]) ? low[u] : desc[idx_v];
+
+        v = v->prox;
+    }
+}
+
+char *arestas_corte(grafo *g) 
+{
+    int *visitado = calloc(g->num_vertices, sizeof(int));
+    int *desc = malloc(g->num_vertices * sizeof(int));
+    int *low = malloc(g->num_vertices * sizeof(int));
+    int tempo = 0;
+
+    char **pontes = malloc(10 * sizeof(char*));
+    int count = 0, capacity = 10;
+
+    for (unsigned int i = 0; i < g->num_vertices; i++)
+        if (!visitado[i])
+            busca_profundidade_pontes(g, i, -1, &tempo, visitado, desc, low, &pontes, &count, &capacity);
+
+    if (count == 0) 
+    {
+        free(visitado);
+        free(desc);
+        free(low);
+        free(pontes);
+        char *vazio = malloc(1);
+        vazio[0] = '\0';
+        return vazio;
+    }
+
+    // Ordena as pontes alfabeticamente
+    for (int i = 0; i < count - 1; i++) 
+    {
+        for (int j = i + 1; j < count; j++) 
+        {
+            if (strcmp(pontes[i], pontes[j]) > 0) 
+            {
+                char *tmp = pontes[i];
+                pontes[i] = pontes[j];
+                pontes[j] = tmp;
+            }
+        }
+    }
+
+    // Concatena as pontes
+    size_t tam_total = 0;
+    for (int i = 0; i < count; i++)
+        tam_total += strlen(pontes[i]) + 1;
+
+    char *res = malloc(tam_total);
+    res[0] = '\0';
+    for (int i = 0; i < count; i++) 
+    {
+        strcat(res, pontes[i]);
+
+        if (i < count - 1)
+            strcat(res, " ");
+    }
+
+    // Libera memória
+    free(visitado);
+    free(desc);
+    free(low);
+    for (int i = 0; i < count; i++)
+        free(pontes[i]);
+    free(pontes);
+
+    return res;
+}

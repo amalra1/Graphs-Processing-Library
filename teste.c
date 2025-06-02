@@ -23,8 +23,8 @@ int main(void)
 	printf("vértices de corte: %s\n", s=vertices_corte(g));
 	free(s);
 
-	// printf("arestas de corte: %s\n", s=arestas_corte(g));
-	// free(s);
+	printf("arestas de corte: %s\n", s=arestas_corte(g));
+	free(s);
 
 	// Pra testar
 	imprime_lista_adjacencia(g);
