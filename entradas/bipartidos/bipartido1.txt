@@ -1,7 +1,7 @@
 bipartido com 6 vértices
 
-um -- dois
-dois -- três
-três -- quatro
-quatro -- cinco
-cinco -- seis
+um -- dois 6
+dois -- três 5
+três -- quatro 10
+quatro -- cinco 14
+cinco -- seis 17

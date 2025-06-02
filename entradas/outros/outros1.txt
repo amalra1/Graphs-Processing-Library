@@ -1,22 +1,22 @@
 tres componentes aleatórios
 
 // quadrado
-um -- dois
-dois -- quatro
-quatro -- três
-três -- um
+um -- dois 1
+dois -- quatro 23
+quatro -- três 7
+três -- um 12
 
 // árvore
-cinco -- seis
-seis -- sete
-sete -- oito
-sete -- nove
-oito -- dez
+cinco -- seis 5
+seis -- sete 10
+sete -- oito 8
+sete -- nove 11
+oito -- dez 20
 
 // 'H' na horizontal
-onze -- doze
-doze -- treze
-doze -- quatorze
-quatorze -- dezesseis
-quinze -- dezesseis
-dezesseis -- dezessete
+onze -- doze 39
+doze -- treze 43
+doze -- quatorze 40
+quatorze -- dezesseis 2
+quinze -- dezesseis 15
+dezesseis -- dezessete 25

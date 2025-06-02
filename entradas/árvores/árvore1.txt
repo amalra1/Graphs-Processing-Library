@@ -1,7 +1,7 @@
 árvore de caminho
 
-um -- dois
-dois -- tres
-tres -- quatro
-quatro -- cinco
-cinco -- seis
+um -- dois 1
+dois -- tres 2
+tres -- quatro 3
+quatro -- cinco 4
+cinco -- seis 5

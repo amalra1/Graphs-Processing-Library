@@ -46,11 +46,11 @@ static int indice_vertice(char *nome, vertice **lista_adj, unsigned int total)
     return -1;
 }
 
-static void adiciona_aresta(vertice **lista_adj, int origem, int destino) 
+static void adiciona_aresta_com_peso(vertice **lista_adj, int origem, int destino, int peso) 
 {
     vertice *v = malloc(sizeof(vertice));
     v->nome = lista_adj[destino]->nome;
-    v->peso = 0;
+    v->peso = peso;
     v->prox = lista_adj[origem]->prox;
     lista_adj[origem]->prox = v;
 }
@@ -102,7 +102,6 @@ unsigned int destroi_grafo(grafo *g)
     return 1;
 }
 
-
 grafo *le_grafo(FILE *f) 
 {
     if (!f) return NULL;
@@ -142,6 +141,14 @@ grafo *le_grafo(FILE *f)
             while (*p2 == ' ') p2++;
             while (*(sep - 1) == ' ' && sep > linha) *(--sep) = '\0';
 
+            char *peso_str = strrchr(p2, ' ');
+            int peso = 0;
+            if (peso_str) 
+            {
+                peso = atoi(peso_str + 1);
+                *peso_str = '\0';
+            }
+
             adiciona_nome(p1, &nomes, &total, &capacidade);
             adiciona_nome(p2, &nomes, &total, &capacidade);
             g->num_arestas++;
@@ -168,7 +175,6 @@ grafo *le_grafo(FILE *f)
     {
         linha[strcspn(linha, "\n")] = 0;
 
-
         if (strlen(linha) == 0 || (linha[0] == '/' && linha[1] == '/')) continue;
 
         if (!leu_nome) 
@@ -186,6 +192,14 @@ grafo *le_grafo(FILE *f)
             while (*p2 == ' ') p2++;
             while (*(sep - 1) == ' ' && sep > linha) *(--sep) = '\0';
 
+            char *peso_str = strrchr(p2, ' ');
+            int peso = 0;
+            if (peso_str) 
+            {
+                peso = atoi(peso_str + 1);
+                *peso_str = '\0';
+            }
+
             int idx1 = indice_vertice(p1, g->lista_adj, total);
             int idx2 = indice_vertice(p2, g->lista_adj, total);
 
@@ -193,8 +207,8 @@ grafo *le_grafo(FILE *f)
             {
                 // Adiciona duas vezes porque é ida e volta
                 // No num_arestas está certo, pois conta apenas uma vez
-                adiciona_aresta(g->lista_adj, idx1, idx2);
-                adiciona_aresta(g->lista_adj, idx2, idx1);
+                adiciona_aresta_com_peso(g->lista_adj, idx1, idx2, peso);
+                adiciona_aresta_com_peso(g->lista_adj, idx2, idx1, peso);
             }
         }
     }

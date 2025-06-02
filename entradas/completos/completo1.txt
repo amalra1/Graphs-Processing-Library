@@ -1,8 +1,8 @@
 quadrado completo
 
-um -- dois
-dois -- três
-três -- quatro
-quatro -- um
-um -- três
-quatro -- dois
+um -- dois 13
+dois -- três 9
+três -- quatro 20
+quatro -- um 34
+um -- três 52
+quatro -- dois 1

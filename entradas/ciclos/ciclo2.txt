@@ -1,7 +1,7 @@
 quadrado_com_vértice_e_um_isolado
 
-um -- dois
-dois -- três
-quatro -- três
-quatro -- um
+um -- dois 8
+dois -- três 45
+quatro -- três 23
+quatro -- um 17
 cinco

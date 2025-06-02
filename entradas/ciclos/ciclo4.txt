@@ -1,6 +1,6 @@
 quadrado_com_vertices_de_nome_grande_e_um_isolado
-vinte e quatro -- dois
-dois -- quarenta e sete
-quarenta e sete -- três
-três -- vinte e quatro
+vinte e quatro -- dois 54
+dois -- quarenta e sete 65
+quarenta e sete -- três 23
+três -- vinte e quatro 78
 cento e vinte três

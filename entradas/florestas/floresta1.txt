@@ -1,11 +1,11 @@
 floresta com 3 árvores
 
-um -- dois
-dois -- três
+um -- dois 12
+dois -- três 24
 
-quatro -- cinco
-quatro -- seis
+quatro -- cinco 67
+quatro -- seis 35
 
-sete -- oito
-oito -- nove
-oito -- dez
+sete -- oito 48
+oito -- nove 29
+oito -- dez 45

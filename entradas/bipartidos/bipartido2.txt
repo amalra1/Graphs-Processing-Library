@@ -1,13 +1,13 @@
 grafo bipartido completo com 6 vértices
 
-um -- dois
-um -- quatro
-um -- seis
+um -- dois 2
+um -- quatro 3
+um -- seis 4
 
-três -- dois
-três -- quatro
-três -- seis
+três -- dois 5
+três -- quatro 6
+três -- seis 7
 
-cinco -- dois
-cinco -- quatro
-cinco -- seis
+cinco -- dois 3
+cinco -- quatro 12
+cinco -- seis 8

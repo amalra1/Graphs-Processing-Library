@@ -2,22 +2,22 @@
 
 
 
-um -- dois
+um -- dois 10
 
-dois -- quatro
-dois -- cinco
-um -- três
-
-
-três -- seis
-três -- sete
-três -- oito
-sete -- nove
-nove -- doze
-
-doze -- treze
-oito -- dez
+dois -- quatro 20
+dois -- cinco 18
+um -- três 5
 
 
-oito -- onze
+três -- seis 34
+três -- sete 26
+três -- oito 29
+sete -- nove 15
+nove -- doze 3
+
+doze -- treze 9
+oito -- dez 43
+
+
+oito -- onze 22
 

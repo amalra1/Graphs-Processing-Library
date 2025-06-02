@@ -1,7 +1,7 @@
 árvore 3
 
-cinco -- seis
-três -- quatro
-cinco -- três
-dois -- um
-dois -- três
+cinco -- seis 10
+três -- quatro 20
+cinco -- três 30
+dois -- um 1
+dois -- três 5
