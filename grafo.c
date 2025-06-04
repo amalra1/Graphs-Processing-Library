@@ -103,13 +103,6 @@ unsigned int destroi_grafo(grafo *g)
     return 1;
 }
 
-// Função auxiliar para extrair nomes dos vértices e peso da linha de aresta
-// Exemplo de linha: "um -- dois 4"
-// Após a execução:
-//   *v1 = "um"
-//   *v2 = "dois"
-//   *peso = 4 (se não tiver peso, 0)
-// A função altera a linha original para inserir '\0' nos lugares certos
 static void parse_aresta(char *linha, char **v1, char **v2, int *peso) {
     char *sep = strstr(linha, "--");
     if (!sep) {
