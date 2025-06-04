@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "grafo.h"
 
 #define MAX_LINHA 2048
@@ -102,65 +103,85 @@ unsigned int destroi_grafo(grafo *g)
     return 1;
 }
 
-grafo *le_grafo(FILE *f) 
-{
+// Função auxiliar para extrair nomes dos vértices e peso da linha de aresta
+// Exemplo de linha: "um -- dois 4"
+// Após a execução:
+//   *v1 = "um"
+//   *v2 = "dois"
+//   *peso = 4 (se não tiver peso, 0)
+// A função altera a linha original para inserir '\0' nos lugares certos
+static void parse_aresta(char *linha, char **v1, char **v2, int *peso) {
+    char *sep = strstr(linha, "--");
+    if (!sep) {
+        *v1 = linha;
+        *v2 = NULL;
+        *peso = 0;
+        return;
+    }
+
+    *sep = '\0';
+    *v1 = linha;
+    *v2 = sep + 2;
+
+    // Remove espaços extras no início de v2
+    while (**v2 == ' ') (*v2)++;
+
+    // Remove espaços à direita de v1
+    while (*(sep - 1) == ' ' && sep > linha) *(--sep) = '\0';
+
+    size_t len = strlen(*v2);
+    while (len > 0 && (*v2)[len - 1] == ' ') {
+        (*v2)[len - 1] = '\0';
+        len--;
+    }
+
+    // Procura por peso no final de v2
+    char *peso_str = strrchr(*v2, ' ');
+    *peso = 1;
+    if (peso_str) {
+        *peso_str = '\0';  // Termina a string antes do peso
+        *peso = atoi(peso_str + 1);  // Converte o peso para inteiro
+    }
+}
+
+// Função principal para ler o grafo
+grafo *le_grafo(FILE *f) {
     if (!f) return NULL;
 
     grafo *g = inicializa_grafo();
-
-    if (!g) 
-        return NULL;
+    if (!g) return NULL;
 
     char linha[MAX_LINHA];
     char **nomes = malloc(10 * sizeof(char*));
     unsigned int total = 0, capacidade = 10;
     int leu_nome = 0;
 
-    // Coleta nomes do grafo e vértices
-    while (fgets(linha, MAX_LINHA, f)) 
-    {
-        linha[strcspn(linha, "\n")] = 0;
+    // Primeiro loop: coleta nomes dos vértices (sem peso)
+    while (fgets(linha, MAX_LINHA, f)) {
+        linha[strcspn(linha, "\n")] = 0;  // Remove '\n'
 
-        // Ignora os comentários e linhas vazias
         if (strlen(linha) == 0 || (linha[0] == '/' && linha[1] == '/')) 
             continue;
 
-        if (!leu_nome) 
-        {
+        if (!leu_nome) {
             strcpy(g->nome, linha);
             leu_nome = 1;
             continue;
         }
 
-        char *sep = strstr(linha, "--");
-        if (sep) 
-        {
-            *sep = '\0';
-            char *p1 = linha;
-            char *p2 = sep + 2;
-            while (*p2 == ' ') p2++;
-            while (*(sep - 1) == ' ' && sep > linha) *(--sep) = '\0';
+        char *v1, *v2;
+        int peso;
+        parse_aresta(linha, &v1, &v2, &peso);
 
-            char *peso_str = strrchr(p2, ' ');
-            int peso = 0;
-            if (peso_str) 
-            {
-                peso = atoi(peso_str + 1);
-                *peso_str = '\0';
-            }
+        adiciona_nome(v1, &nomes, &total, &capacidade);
+        if (v2) adiciona_nome(v2, &nomes, &total, &capacidade);
 
-            adiciona_nome(p1, &nomes, &total, &capacidade);
-            adiciona_nome(p2, &nomes, &total, &capacidade);
-            g->num_arestas++;
-        } 
-        else
-            adiciona_nome(linha, &nomes, &total, &capacidade);
+        if (v2) g->num_arestas++;  // Só conta se é aresta, não vértice isolado
     }
 
     g->num_vertices = total;
     g->lista_adj = malloc(total * sizeof(vertice*));
-    for (unsigned int i = 0; i < total; i++) 
-    {
+    for (unsigned int i = 0; i < total; i++) {
         g->lista_adj[i] = malloc(sizeof(vertice));
         g->lista_adj[i]->nome = nomes[i];
         g->lista_adj[i]->peso = 0;
@@ -170,43 +191,27 @@ grafo *le_grafo(FILE *f)
     rewind(f);
     leu_nome = 0;
 
-    // Conecta os vértices pelas arestas na lista de adjacência
-    while (fgets(linha, MAX_LINHA, f)) 
-    {
+    // Segundo loop: conecta vértices pelas arestas (com peso)
+    while (fgets(linha, MAX_LINHA, f)) {
         linha[strcspn(linha, "\n")] = 0;
 
-        if (strlen(linha) == 0 || (linha[0] == '/' && linha[1] == '/')) continue;
+        if (strlen(linha) == 0 || (linha[0] == '/' && linha[1] == '/')) 
+            continue;
 
-        if (!leu_nome) 
-        {
+        if (!leu_nome) {
             leu_nome = 1;
             continue;
         }
 
-        char *sep = strstr(linha, "--");
-        if (sep) 
-        {
-            *sep = '\0';
-            char *p1 = linha;
-            char *p2 = sep + 2;
-            while (*p2 == ' ') p2++;
-            while (*(sep - 1) == ' ' && sep > linha) *(--sep) = '\0';
+        char *v1, *v2;
+        int peso;
+        parse_aresta(linha, &v1, &v2, &peso);
 
-            char *peso_str = strrchr(p2, ' ');
-            int peso = 0;
-            if (peso_str) 
-            {
-                peso = atoi(peso_str + 1);
-                *peso_str = '\0';
-            }
+        if (v2) {
+            int idx1 = indice_vertice(v1, g->lista_adj, total);
+            int idx2 = indice_vertice(v2, g->lista_adj, total);
 
-            int idx1 = indice_vertice(p1, g->lista_adj, total);
-            int idx2 = indice_vertice(p2, g->lista_adj, total);
-
-            if (idx1 != -1 && idx2 != -1) 
-            {
-                // Adiciona duas vezes porque é ida e volta
-                // No num_arestas está certo, pois conta apenas uma vez
+            if (idx1 != -1 && idx2 != -1) {
                 adiciona_aresta_com_peso(g->lista_adj, idx1, idx2, peso);
                 adiciona_aresta_com_peso(g->lista_adj, idx2, idx1, peso);
             }
@@ -369,128 +374,113 @@ unsigned int bipartido(grafo *g)
     return 1;
 }
 
-static void busca_largura_distancia(grafo *g, int inicio, int *dist, int *visitado) 
-{
-    unsigned int *fila = malloc(g->num_vertices * sizeof(unsigned int));
-    unsigned int ini = 0, fim = 0;
+int compara_inteiros(const void *a, const void *b) {
+    return (*(int*)a) - (*(int*)b);
+}
 
-    fila[fim++] = inicio;
-    dist[inicio] = 0;
-    visitado[inicio] = 1;
+// Retorna o menor caminho entre dois vértices
+int* dijkstra(grafo *g, int origem) {
+    int n = g->num_vertices;
+    int *dist = malloc(n * sizeof(int));
+    int *visitado = calloc(n, sizeof(int));
 
-    while (ini < fim) 
-    {
-        int atual = fila[ini++];
-        vertice *vizinho = g->lista_adj[atual]->prox;
+    for (int i = 0; i < n; i++) {
+        dist[i] = INT_MAX;
+    }
+    dist[origem] = 0;
 
-        while (vizinho) 
-        {
-            int idx = -1;  // Inicializa com um valor padrão para 'não encontrado'
-            for (unsigned int i = 0; i < g->num_vertices; i++) 
-            {
-                if (strcmp(g->lista_adj[i]->nome, vizinho->nome) == 0) 
-                {
-                    idx = i;
-                    break;
+    for (int count = 0; count < n - 1; count++) {
+        // Escolhe o vértice não visitado com menor distância
+        int u = -1;
+        for (int i = 0; i < n; i++) {
+            if (!visitado[i] && (u == -1 || dist[i] < dist[u])) {
+                u = i;
+            }
+        }
+
+        if (dist[u] == INT_MAX)
+            break;  // Não há mais vértices alcançáveis
+
+        visitado[u] = 1;
+
+        vertice *viz = g->lista_adj[u]->prox;
+        while (viz) {
+            int v = indice_vertice(viz->nome, g->lista_adj, g->num_vertices);
+            if (!visitado[v] && dist[u] + viz->peso < dist[v]) {
+                dist[v] = dist[u] + viz->peso;
+            }
+            viz = viz->prox;
+        }
+    }
+
+    free(visitado);
+    return dist;
+}
+
+char *diametros(grafo *g) {
+    unsigned int n = g->num_vertices;
+    int *visitado = calloc(n, sizeof(int));
+    int *diametros = malloc(n * sizeof(int));  // No máximo n componentes (todos os vértices isolados)
+    int qtd_componentes = 0;
+
+    for (unsigned int i = 0; i < n; i++) {
+        if (!visitado[i]) {
+            // Marca todos os vértices desse componente como visitado
+            busca_profundidade(g, i, visitado);
+
+            // Cria uma lista dos vértices desse componente
+            int *vertices_componente = malloc(n * sizeof(int));
+            int tamanho = 0;
+            for (unsigned int j = 0; j < n; j++) {
+                if (visitado[j] == 1) {
+                    vertices_componente[tamanho++] = j;
+                    // Marca como 2 para não considerar de novo no próximo componente
+                    visitado[j] = 2;
                 }
             }
 
-            if (idx != -1 && !visitado[idx]) 
-            {
-                dist[idx] = dist[atual] + 1;
-                visitado[idx] = 1;
-                fila[fim++] = idx;
+            // Calcula o diâmetro desse componente
+            int diametro = 0;
+            for (int vi = 0; vi < tamanho; vi++) {
+                int origem = vertices_componente[vi];
+                int *dist = dijkstra(g, origem);  // Calcula as distâncias a partir do vértice origem (testa todos os vértices do componente como origem)
+
+                for (int vj = 0; vj < tamanho; vj++) {
+                    int destino = vertices_componente[vj];
+                    // Salva a maior distância (menor caminho) encontrada (diâmetro)
+                    if (dist[destino] != INT_MAX && dist[destino] > diametro) {
+                        diametro = dist[destino];
+                    }
+                }
+
+                free(dist);
             }
-            vizinho = vizinho->prox;
+
+            diametros[qtd_componentes++] = diametro;
+            free(vertices_componente);
         }
     }
 
-    free(fila);
-}
+    // Ordena os diâmetros
+    qsort(diametros, qtd_componentes, sizeof(int), compara_inteiros);
 
-// Usa a estratégia de usar duas buscas em largura para encontrar o diâmetro do componente
-char *diametros(grafo *g) 
-{
-    int *visitado_global = calloc(g->num_vertices, sizeof(int));
-    int *diametros = malloc(g->num_vertices * sizeof(int));
-    int qtd_diametros = 0;
+    // Monta a string de resposta
+    char *resultado = malloc(2048);
+    resultado[0] = '\0';
+    char buffer[64];
 
-    for (unsigned int i = 0; i < g->num_vertices; i++) 
-    {
-        if (visitado_global[i]) 
-            continue;
-
-        // 1ª busca a partir de um vértice qualquer
-        int *dist1 = calloc(g->num_vertices, sizeof(int));
-        int *visit1 = calloc(g->num_vertices, sizeof(int));
-        busca_largura_distancia(g, i, dist1, visit1);
-
-        int max_dist = 0, idx_max = i;
-        for (unsigned int j = 0; j < g->num_vertices; j++) 
-        {
-            if (dist1[j] > max_dist) 
-            {
-                max_dist = dist1[j];
-                idx_max = j;
-            }
-
-            if (visit1[j])
-                visitado_global[j] = 1;
-        }
-
-        free(dist1);
-        free(visit1);
-
-        // 2ª busca a partir do vértice encontrado na 1ª
-        int *dist2 = calloc(g->num_vertices, sizeof(int));
-        int *visit2 = calloc(g->num_vertices, sizeof(int));
-        busca_largura_distancia(g, idx_max, dist2, visit2);
-
-        int diametro = 0;
-        for (unsigned int j = 0; j < g->num_vertices; j++) 
-        {
-            if (dist2[j] > diametro)
-                diametro = dist2[j];
-        }
-
-        diametros[qtd_diametros++] = diametro;
-
-        free(dist2);
-        free(visit2);
-    }
-
-    free(visitado_global);
-
-    // Ordena de forma decrescente
-    for (int i = 0; i < qtd_diametros - 1; i++) 
-    {
-        for (int j = i + 1; j < qtd_diametros; j++) 
-        {
-            if (diametros[i] > diametros[j]) 
-            {
-                int tmp = diametros[i];
-                diametros[i] = diametros[j];
-                diametros[j] = tmp;
-            }
-        }
-    }
-
-    // Concatena tudo
-    char *res = malloc(12 * qtd_diametros + 1);
-    res[0] = '\0';
-    char buffer[16];
-
-    for (int i = 0; i < qtd_diametros; i++) 
-    {
+    for (int i = 0; i < qtd_componentes; i++) {
         sprintf(buffer, "%d", diametros[i]);
-        strcat(res, buffer);
-
-        if (i < qtd_diametros - 1)
-            strcat(res, " ");
+        strcat(resultado, buffer);
+        if (i != qtd_componentes - 1) {
+            strcat(resultado, " ");
+        }
     }
 
+    free(visitado);
     free(diametros);
-    return res;
+
+    return resultado;
 }
 
 static void busca_profundidade_articulacao(grafo *g, int u, int parent, int *tempo, int *visitado, int *desc, int *low, int *articulacao, int *time) 

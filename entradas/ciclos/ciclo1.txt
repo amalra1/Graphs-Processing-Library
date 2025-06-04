@@ -3,7 +3,7 @@ triângulo_com_vértice
 
 // uma lista com três arestas
 um -- dois 4
-dois -- quatro 5
+dois -- quatro
 quatro -- um 9
 
 // um vértice isolado
