@@ -1,6 +1,8 @@
 #ifndef GRAFO_H
 #define GRAFO_H
 
+#include <stdio.h>
+
 //------------------------------------------------------------------------------
 // estrutura de dados para representar um grafo
 
@@ -21,7 +23,7 @@ typedef struct grafo grafo;
 // uma aresta é representada por uma linha
 // xxx -- yyy ppp
 //
-// onde xxx e yyy são nomes de vértices e ppp (opcional) é um int indicando o peso da aresta
+// onde xxx e yyy são nomes de vértices e ppp (opcional) é um int não negativo indicando o peso da aresta
 //
 // se um vértice faz parte de uma aresta, não é necessário nomeá-lo individualmente em uma linha
 //

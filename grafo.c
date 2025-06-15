@@ -1,8 +1,7 @@
-#include <stdio.h>
+#include "grafo.h"
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "grafo.h"
 
 #define MAX_LINHA 2048
 
