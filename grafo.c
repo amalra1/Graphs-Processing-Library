@@ -19,6 +19,14 @@ struct grafo {
     unsigned int num_arestas;
 };
 
+// Protótipos para silenciar warnings
+
+grafo *inicializa_grafo(void);
+void imprime_lista_adjacencia(grafo *g);
+void busca_profundidade(grafo *g, int idx, int *visitado);
+int compara_inteiros(const void *a, const void *b);
+int* dijkstra(grafo *g, int origem);
+
 static void adiciona_nome(char *nome, char ***nomes, unsigned int *total, unsigned int *capacidade) 
 {
     for (unsigned int j = 0; j < *total; j++) 
@@ -42,7 +50,7 @@ static int indice_vertice(char *nome, vertice **lista_adj, unsigned int total)
 {
     for (unsigned int i = 0; i < total; i++)
         if (strcmp(lista_adj[i]->nome, nome) == 0)
-            return i;
+            return (int)i;
 
     return -1;
 }
@@ -56,7 +64,7 @@ static void adiciona_aresta_com_peso(vertice **lista_adj, int origem, int destin
     lista_adj[origem]->prox = v;
 }
 
-grafo *inicializa_grafo() 
+grafo *inicializa_grafo(void) 
 {
     grafo *g = malloc(sizeof(grafo));
 
@@ -257,7 +265,7 @@ void busca_profundidade(grafo *g, int idx, int *visitado)
         {
             if (strcmp(v->nome, g->lista_adj[i]->nome) == 0 && !visitado[i]) 
             {
-                busca_profundidade(g, i, visitado);
+                busca_profundidade(g, (int)i, visitado);
                 break;
             }
         }
@@ -283,7 +291,7 @@ unsigned int n_componentes(grafo *g)
         if (!visitado[i]) 
         {
             componentes++;
-            busca_profundidade(g, i, visitado);
+            busca_profundidade(g, (int)i, visitado);
         }
     }
 
@@ -324,7 +332,7 @@ unsigned int bipartido(grafo *g)
 
         while (fila_inicio < fila_fim) 
         {
-            int atual = fila[fila_inicio++];
+            unsigned int atual = fila[fila_inicio++];
             vertice *vizinho = g->lista_adj[atual]->prox;
 
             while (vizinho) 
@@ -334,7 +342,7 @@ unsigned int bipartido(grafo *g)
                 {
                     if (strcmp(g->lista_adj[j]->nome, vizinho->nome) == 0) 
                     {
-                        idx_vizinho = j;
+                        idx_vizinho = (int)j;
                         break;
                     }
                 }
@@ -344,7 +352,7 @@ unsigned int bipartido(grafo *g)
                     if (cor[idx_vizinho] == -1) 
                     {
                         cor[idx_vizinho] = 1 - cor[atual];
-                        fila[fila_fim++] = idx_vizinho;
+                        fila[fila_fim++] = (unsigned int)idx_vizinho;
                     }
 
                     // Se falhar em algum dos casos, já não é bipartido 
@@ -368,26 +376,26 @@ unsigned int bipartido(grafo *g)
 }
 
 int compara_inteiros(const void *a, const void *b) {
-    return (*(int*)a) - (*(int*)b);
+    return (*(const int*)a) - (*(const int*)b);
 }
 
 // Retorna o menor caminho entre dois vértices
 int* dijkstra(grafo *g, int origem) {
-    int n = g->num_vertices;
+    unsigned int n = g->num_vertices;
     int *dist = malloc(n * sizeof(int));
     int *visitado = calloc(n, sizeof(int));
 
-    for (int i = 0; i < n; i++) {
+    for (unsigned int i = 0; i < n; i++) {
         dist[i] = INT_MAX;
     }
     dist[origem] = 0;
 
-    for (int count = 0; count < n - 1; count++) {
+    for (unsigned int count = 0; count < n - 1; count++) {
         // Escolhe o vértice não visitado com menor distância
         int u = -1;
-        for (int i = 0; i < n; i++) {
+        for (unsigned int i = 0; i < n; i++) {
             if (!visitado[i] && (u == -1 || dist[i] < dist[u])) {
-                u = i;
+                u = (int)i;
             }
         }
 
@@ -419,14 +427,14 @@ char *diametros(grafo *g) {
     for (unsigned int i = 0; i < n; i++) {
         if (!visitado[i]) {
             // Marca todos os vértices desse componente como visitado
-            busca_profundidade(g, i, visitado);
+            busca_profundidade(g, (int)i, visitado);
 
             // Cria uma lista dos vértices desse componente
             int *vertices_componente = malloc(n * sizeof(int));
             int tamanho = 0;
             for (unsigned int j = 0; j < n; j++) {
                 if (visitado[j] == 1) {
-                    vertices_componente[tamanho++] = j;
+                    vertices_componente[tamanho++] = (int)j;
                     // Marca como 2 para não considerar de novo no próximo componente
                     visitado[j] = 2;
                 }
@@ -455,7 +463,7 @@ char *diametros(grafo *g) {
     }
 
     // Ordena os diâmetros
-    qsort(diametros, qtd_componentes, sizeof(int), compara_inteiros);
+    qsort(diametros, (size_t)qtd_componentes, sizeof(int), compara_inteiros);
 
     // Monta a string de resposta
     char *resultado = malloc(2048);
@@ -490,7 +498,7 @@ static void busca_profundidade_articulacao(grafo *g, int u, int parent, int *tem
         {
             if (strcmp(g->lista_adj[i]->nome, v->nome) == 0) 
             {
-                idx_v = i;
+                idx_v = (int)i;
                 break;
             }
         }
@@ -527,7 +535,7 @@ char *vertices_corte(grafo *g)
 
     for (unsigned int i = 0; i < g->num_vertices; i++)
         if (!visitado[i])
-            busca_profundidade_articulacao(g, i, -1, &tempo, visitado, desc, low, articulacao, &tempo);
+            busca_profundidade_articulacao(g, (int)i, -1, &tempo, visitado, desc, low, articulacao, &tempo);
 
     // Conta quantos vértices são de corte
     int count = 0;
@@ -546,7 +554,7 @@ char *vertices_corte(grafo *g)
     }
 
     // Copia os nomes para ordenar
-    char **nomes = malloc(count * sizeof(char*));
+    char **nomes = malloc((size_t)count * sizeof(char*));
     int k = 0;
     for (unsigned int i = 0; i < g->num_vertices; i++) 
         if (articulacao[i])
@@ -603,7 +611,7 @@ static void busca_profundidade_pontes(grafo *g, int u, int parent, int *tempo, i
         {
             if (strcmp(g->lista_adj[i]->nome, v->nome) == 0) 
             {
-                idx_v = i;
+                idx_v = (int)i;
                 break;
             }
         }
@@ -625,7 +633,7 @@ static void busca_profundidade_pontes(grafo *g, int u, int parent, int *tempo, i
                 if (*count == *capacity) 
                 {
                     *capacity *= 2;
-                    *pontes = realloc(*pontes, (*capacity) * sizeof(char*));
+                    *pontes = realloc(*pontes, (size_t)(*capacity) * sizeof(char*));
                 }
 
                 char *ponte = malloc(strlen(g->lista_adj[u]->nome) + strlen(g->lista_adj[idx_v]->nome) + 2);
@@ -656,7 +664,7 @@ char *arestas_corte(grafo *g)
 
     for (unsigned int i = 0; i < g->num_vertices; i++)
         if (!visitado[i])
-            busca_profundidade_pontes(g, i, -1, &tempo, visitado, desc, low, &pontes, &count, &capacity);
+            busca_profundidade_pontes(g, (int)i, -1, &tempo, visitado, desc, low, &pontes, &count, &capacity);
 
     if (count == 0) 
     {

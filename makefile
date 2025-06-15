@@ -13,7 +13,6 @@ COMMON_FLAGS = -pipe \
 	       -Wmissing-field-initializers \
 	       -Wmissing-format-attribute \
 	       -Wmissing-include-dirs \
-	       -Wmissing-noreturn \
 	       -Wnormalized=nfc \
 	       -Woverlength-strings \
 	       -Wpacked \
@@ -46,6 +45,9 @@ all : teste
 
 grafo.o teste.o : %.o : %.c
 	$(CC) -c $(CFLAGS) -o $@ $^
+
+# grafo.o : grafo.cpp
+# 	$(CC) -c $(CPPFLAGS) -o $@ $^
 
 teste : teste.o grafo.o
 	$(CC) $(CFLAGS) -o $@ $^
